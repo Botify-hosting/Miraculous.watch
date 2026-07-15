@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kijken — ProdigiousHub</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="brand"><span class="dot"></span>Prodigious<span class="hl">Hub</span></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu openen" aria-expanded="false">☰</button>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="episodes.html" class="active">Afleveringen</a>
+      <a href="characters.html">Personages</a>
+      <a href="index.html#footer">Over deze site</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section" style="padding-top:40px;">
+  <div class="wrap watch-layout">
+    <div>
+      <div class="player-shell">
+        <div class="mplayer" data-player tabindex="0">
+          <video preload="none" poster="" playsinline></video>
+
+          <div class="placeholder-msg" id="placeholderMsg">
+            <div class="kwami-swirl" style="display:none;" id="loadingSwirl"></div>
+            <div id="placeholderText">
+              <p style="margin:0 0 4px; font-size:1rem;">Deze aflevering staat er nog niet in.</p>
+              <p style="margin:0; font-size:0.8rem; opacity:0.7; font-weight:400;">Zodra je een videobestand koppelt, speelt de player 'm hier automatisch af.</p>
+              <button class="btn btn-primary" id="loadDemoBtn" style="margin-top:18px; font-size:0.85rem; padding:10px 20px;">▶ Demo-video laden (test de speler)</button>
+            </div>
+          </div>
+
+          <div class="center-toggle"><div class="icon-burst">▶</div></div>
+
+          <div class="mcontrols">
+            <div class="mscrub js-scrub">
+              <div class="mscrub-track">
+                <div class="mscrub-buffered"></div>
+                <div class="mscrub-fill"></div>
+                <div class="mscrub-dots">
+                  <span></span><span></span><span></span><span></span><span></span>
+                  <span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="mscrub-handle"></div>
+              </div>
+            </div>
+            <div class="mrow">
+              <button class="mbtn js-play" title="Afspelen/pauzeren (spatie)">▶</button>
+              <button class="mbtn js-skipback" title="10s terug">⏪</button>
+              <button class="mbtn js-skipfwd" title="10s vooruit">⏩</button>
+              <div class="mvol">
+                <button class="mbtn js-mute" title="Dempen (m)">🔊</button>
+                <input type="range" class="js-vol" min="0" max="1" step="0.05" value="1">
+              </div>
+              <span class="mtime js-time">0:00 / 0:00</span>
+              <div class="spacer"></div>
+              <div class="mspeed">
+                <button class="mspeed-btn js-speedbtn">1×</button>
+                <div class="mmenu js-speedmenu">
+                  <button data-rate="0.5">0.5×</button>
+                  <button data-rate="0.75">0.75×</button>
+                  <button data-rate="1" class="active">1×</button>
+                  <button data-rate="1.25">1.25×</button>
+                  <button data-rate="1.5">1.5×</button>
+                  <button data-rate="2">2×</button>
+                </div>
+              </div>
+              <div class="mquality">
+                <button class="mquality-btn js-qualitybtn">1080p</button>
+                <div class="mmenu js-qualitymenu">
+                  <button class="active">1080p</button>
+                  <button>720p</button>
+                  <button>480p</button>
+                </div>
+              </div>
+              <button class="mbtn js-fullscreen" title="Volledig scherm (f)">⛶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ep-meta">
+        <div class="tags" id="epTags"></div>
+        <h1 id="epTitle">Aflevering laden…</h1>
+        <p id="epDesc"></p>
+      </div>
+    </div>
+
+    <aside class="upnext">
+      <h3>In deze reeks</h3>
+      <div class="upnext-list" id="upnextList"></div>
+    </aside>
+  </div>
+</section>
+
+<footer class="site-footer" id="footer">
+  <div class="wrap" style="flex-direction:column; align-items:flex-start;">
+    <div style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:14px;">
+      <span>© 2026 ProdigiousHub — fanproject</span>
+      <span>Gemaakt door fans, voor fans</span>
+    </div>
+    <p class="disclaimer">Dit is een niet-officieel fanproject. Er wordt hier geen auteursrechtelijk beschermde video- of beeldcontent gehost — de speler hierboven draait op een tijdelijke demo-clip totdat je je eigen bestanden koppelt.</p>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/player.js"></script>
+<script>
+  const toggle = document.getElementById('navToggle');
+  const links = document.getElementById('navLinks');
+  toggle.addEventListener('click', ()=>{
+    const open = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+  });
+
+  const params = new URLSearchParams(location.search);
+  const epId = params.get('ep') || EPISODES[0].id;
+  const ep = getEpisode(epId) || EPISODES[0];
+
+  document.title = ep.title + ' — ProdigiousHub';
+  document.getElementById('epTitle').textContent = ep.title;
+  document.getElementById('epDesc').textContent = ep.desc;
+  document.getElementById('epTags').innerHTML = `
+    <span class="tag">Seizoen ${ep.season}</span>
+    <span class="tag">Aflevering ${ep.ep}</span>
+    <span class="tag">${ep.runtime}</span>`;
+
+  document.getElementById('upnextList').innerHTML = EPISODES.map(e => `
+    <a href="watch.html?ep=${e.id}" class="upnext-item ${e.id===ep.id ? 'current':''}">
+      <div class="upnext-thumb">S${e.season}E${e.ep}</div>
+      <div class="upnext-info">
+        <p class="t">${e.title}</p>
+        <p class="n">Seizoen ${e.season} · Aflevering ${e.ep} · ${e.runtime}</p>
+      </div>
+    </a>`).join('');
+
+  // Demo video loader — replace this URL with your own file per episode when ready.
+  const DEMO_SRC = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+  const video = document.querySelector('.mplayer video');
+  const placeholderMsg = document.getElementById('placeholderMsg');
+  const loadingSwirl = document.getElementById('loadingSwirl');
+  const placeholderText = document.getElementById('placeholderText');
+
+  document.getElementById('loadDemoBtn').addEventListener('click', ()=>{
+    placeholderText.style.display = 'none';
+    loadingSwirl.style.display = 'block';
+    video.src = DEMO_SRC;
+    video.load();
+    video.addEventListener('canplay', ()=>{
+      placeholderMsg.style.display = 'none';
+      video.play();
+    }, { once: true });
+  });
+</script>
+</body>
+</html>
