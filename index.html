@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prodigious — Fanhub</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="brand"><span class="dot"></span>Prodigious<span class="hl">Hub</span></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu openen" aria-expanded="false">☰</button>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="episodes.html">Afleveringen</a>
+      <a href="characters.html">Personages</a>
+      <a href="#footer">Over deze site</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <div class="eyebrow"><span class="pulse"></span> Fanproject in opbouw</div>
+      <h1>Eén stad.<br>Twee geheimen.<br><span class="accent">Oneindig veel afleveringen.</span></h1>
+      <p class="lead">Een ongeautoriseerd fanhub voor liefhebbers van magische ringen, stippen en een stad die zichzelf steeds opnieuw moet redden. Bladeren, ontdekken, en straks — kijken.</p>
+      <div class="hero-actions">
+        <a href="episodes.html" class="btn btn-primary">Bekijk afleveringen</a>
+        <a href="characters.html" class="btn btn-ghost">Ontmoet de personages</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="ring"></div>
+      <div class="core">S4</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Laatst toegevoegd</h2>
+        <p>Nieuwe seizoenen komen hier binnen zodra ze klaar zijn. Nu nog placeholders — binnenkort met echte spelers.</p>
+      </div>
+      <a href="episodes.html" class="btn btn-ghost">Alles bekijken →</a>
+    </div>
+    <div class="ep-grid" id="latestGrid"></div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Personages</h2>
+        <p>De vaste gezichten (en maskers) van de reeks.</p>
+      </div>
+      <a href="characters.html" class="btn btn-ghost">Alle personages →</a>
+    </div>
+    <div class="char-grid" id="charPreview"></div>
+  </div>
+</section>
+
+<footer class="site-footer" id="footer">
+  <div class="wrap" style="flex-direction:column; align-items:flex-start;">
+    <div style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:14px;">
+      <span>© 2026 ProdigiousHub — fanproject</span>
+      <span>Gemaakt door fans, voor fans</span>
+    </div>
+    <p class="disclaimer">Dit is een niet-officieel fanproject, niet verbonden aan of onderschreven door de makers of rechthebbenden van het origineel. Alle personagenamen op deze site zijn fictieve verzinsels ter illustratie. Er wordt hier geen auteursrechtelijk beschermde video- of beeldcontent gehost.</p>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script>
+  const toggle = document.getElementById('navToggle');
+  const links = document.getElementById('navLinks');
+  toggle.addEventListener('click', ()=>{
+    const open = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+  });
+
+  function spotDeco(){
+    const n = 3;
+    let out = '';
+    for(let i=0;i<n;i++){
+      const size = 20 + Math.random()*40;
+      out += `<span class="spot-deco" style="width:${size}px;height:${size}px;left:${Math.random()*90}%;top:${Math.random()*80}%;"></span>`;
+    }
+    return out;
+  }
+
+  function renderCard(e){
+    return `
+      <a href="watch.html?ep=${e.id}" class="ep-card">
+        <div class="ep-thumb">
+          ${spotDeco()}
+          <div class="play-badge">▶</div>
+          <div class="ep-runtime">${e.runtime}</div>
+        </div>
+        <div class="ep-body">
+          <div class="ep-num">S${e.season} · E${e.ep}</div>
+          <h3 class="ep-title">${e.title}</h3>
+          <p class="ep-desc">${e.desc}</p>
+        </div>
+      </a>`;
+  }
+
+  document.getElementById('latestGrid').innerHTML =
+    EPISODES.slice(-4).reverse().map(renderCard).join('');
+
+  const palette = ['var(--red)','#2E3A59','#5B4636','#8E44AD','#2A9D8F','#3A3A3A'];
+  document.getElementById('charPreview').innerHTML =
+    CHARACTERS.slice(0,4).map((c,i)=>`
+      <div class="char-card">
+        <div class="char-avatar" style="background:${palette[i%palette.length]}">${c.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+        <h3 class="char-name">${c.name}</h3>
+        <p class="char-role">${c.role}</p>
+        <p class="char-desc">${c.desc}</p>
+      </div>`).join('');
+</script>
+</body>
+</html>
